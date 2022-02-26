@@ -14,7 +14,8 @@ class AddressModel(db.Model):
     complement:str
 
     __tablename__ = 'address'
-
+    
+    id = Column(Integer,primary_key=True)
     cep = Column(String,nullable=False)
     city = Column(String,nullable=False)
     district = Column(String,nullable=False)

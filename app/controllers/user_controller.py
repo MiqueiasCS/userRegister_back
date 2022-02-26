@@ -1,6 +1,7 @@
 from flask import request,current_app,jsonify
 from app.models.user_model import UserModel
-from app.utils import check_email,check_user,check_login_data
+from app.models.address_model import AddressModel
+from app.utils import check_email,check_user,check_login_data,check_create_data
 from app.exceptions import EmailNotFoundError, IncorrectPasswordError, WrongKeysError,InvalidValueError, InvalidEmailError, NotFoundError,InvalidLoginDataTypeError
 from sqlalchemy.exc import IntegrityError
 from flask_jwt_extended import create_access_token
@@ -11,18 +12,30 @@ def  create_user():
 
     body = request.get_json()
     try:
-        data = UserModel.check_data(body)
+        data = check_create_data(body)
         check_email(data["email"])
 
         password_to_hash = data.pop("password")
 
-        user = UserModel(**data)
+        userData = {
+            "name":data.pop("name"),
+            "email":data.pop("email")
+        }
+
+        user = UserModel(**userData)
         user.password = password_to_hash
         
         session.add(user)
         session.commit()
+        
+        data["user_id"] = user.id
+        user_address = AddressModel(**data)
+        
+        session.add(user_address)
+        session.commit()
 
-        return jsonify(user),201
+
+        return jsonify(user.serialize()),201
     except WrongKeysError as err:
         return jsonify(err.message),400
     except InvalidValueError as err:
@@ -63,8 +76,8 @@ def list_users():
 
 def get_user(id):
     try:
-        user = check_user(id)
-        return jsonify(user),200
+        user:UserModel = check_user(id)
+        return jsonify(user.serialize()),200
     
     except NotFoundError as err:
         return jsonify(err.message),404
