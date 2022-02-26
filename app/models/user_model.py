@@ -37,8 +37,10 @@ class UserModel(db.Model):
     def password(self,password_to_hash):
         self.password_hash = generate_password_hash(password_to_hash)
 
+
     def check_password(self,password_to_compare):
         return check_password_hash(self.password_hash,password_to_compare)
+
 
     @staticmethod
     def check_data(data:dict):

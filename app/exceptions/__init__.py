@@ -39,3 +39,28 @@ class NotFoundError(Exception):
             "message": "User not found"
         }
         super().__init__(self.message)
+
+
+class EmailNotFoundError(Exception):
+    def __init__(self, email):
+        self.message = {
+            "email": f'{email}',
+            "message": "Email Not registered"
+        }
+        super().__init__(self.message)
+
+
+class IncorrectPasswordError(Exception):
+    def __init__(self):
+        self.message = {
+            "message": "email and password do not match"
+        }
+        super().__init__(self.message)
+
+
+class InvalidLoginDataTypeError(Exception):
+    def __init__(self,msg:str):
+        self.message = {
+            "message": msg
+        }
+        super().__init__(self.message)
