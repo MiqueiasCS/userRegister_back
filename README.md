@@ -1,12 +1,10 @@
 ## Instalação
 
-- Primeiro faça o fork do repositório
+- Primeiro faça o fork e clone o repositório
 
 ```
-
+git clone git@github.com:MiqueiasCS/userRegister_back.git
 ```
-
-- Em seguida faça um git clone para a sua maquina
 
 - Crie o ambiente um ambiente [virtual em python](https://docs.python.org/pt-br/3/tutorial/venv.html)
 
@@ -26,10 +24,11 @@ $ source venv/bin/activate
 $ pip install -r requirements.txt
 ```
 
-- Configure as variáveis **FLASK_ENV** e **SQLALCHEMY_DATABASE_URI** segundo o arquivo `.env.example`
-
-  - Não esqueça de criar o seu banco de dados e adicionar no .env
-
+- Crie um arquivo `.env` e configure as variáveis **FLASK_ENV**, **SECRET_KEY** e **SQLALCHEMY_DATABASE_URI** seguindo o exemplo do arquivo `.env.example`
+	- Crie um banco de dados no PostgreSQL e configure SQLALCHEMY_DATABASE_URI com as informações do banco (nome do banco, usuário,senha);
+	- SECRET_KEY pode ser qualquer palavra. Ela será usada para criar o token;
+	- FLASK_ENV indica o ambiente de desenvolvimento (Environment).
+	
 - Crie as tabelas no banco de dados através do comando:
 
 ```
@@ -50,7 +49,7 @@ $ flask run
  * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
  * Restarting with stat
  * Debugger is active!
- * Debugger PIN: 112-925-941
+ * Debugger PIN: 380-161-167
 ```
 
 ## (opcional) Rodando o banco de dados em um container
@@ -87,7 +86,7 @@ $ flask run
 docker-compose down
 ```
 
-- #### Obs: ao encerrar o container todos os dados gravados no banco de dados dele serão perdidos.
+- #### Obs: ao encerrar o container todos os dados gravados no banco de dados do mesmo serão perdidos.
 
 #
 
@@ -101,9 +100,9 @@ docker-compose down
 
 ## Rotas
 
-### baseUrl: http://127.0.0.1:5000/api
+### Base Url: http://127.0.0.1:5000/api
 
-#### POST /user
+## POST /user
 
 - Registra um usuário
 - body
@@ -120,32 +119,35 @@ docker-compose down
 	    "district": "Barroso",
 	    "street":"R Manuel Figueiredo",
 	    "House_number":222,
-        "complement":"A"
+            "complement":"A"
    }
 
 ```
 
 - response:
+- _RESPONSE STATUS -> HTTP **201 (CREATED)**_
 
 ```python
    # exemplo
    {
-        "id": 6,
-        "name": "fulano",
-        "email": "fulano@mail.com",
-        "cep": "11111111",
-        "city": "Fortaleza",
-        "district": "Barroso",
-        "street": "R Manuel Figueiredo",
-        "House_number": 222,
-        "complement": "A"
-    }
+  	"id": 1,
+  	"name": "fulano",
+  	"email": "fulano@mail.com",
+  	"address": {
+    		"cep": "11111111",
+    		"city": "Fortaleza",
+    		"district": "Barroso",
+    		"street": "R Manuel Figueiredo",
+    		"House_number": 222,
+    		"complement": "A"
+  		}
+  }
 
 ```
 
 - **Requisições inválidas**
 
-- _RESPONSE STATUS -> HTTP 400 (BAD REQUEST)_
+- _RESPONSE STATUS -> HTTP **400 (BAD REQUEST)**_
 - sem uma das chaves não opcionais:
 
 ```python
@@ -192,7 +194,7 @@ docker-compose down
 }
 ```
 
-- _RESPONSE STATUS -> HTTP 400 (BAD REQUEST)_
+- _RESPONSE STATUS -> HTTP **400 (BAD REQUEST)**_
 - Passar chaves com valor errado:
 
 ```python
@@ -240,7 +242,7 @@ docker-compose down
 }
 ```
 
-- _RESPONSE STATUS -> HTTP 409 (CONFLICT)_
+- _RESPONSE STATUS -> HTTP **409 (CONFLICT)**_
   - tentar cadastrar um email já registrado
 
 ```python
@@ -250,11 +252,48 @@ docker-compose down
 }
 
 ```
+## POST /login
+- Faz o login do usuário cadastrado
+- body
 
-#### GET /user
+```python
+{
+  "email":"fulano@mail.com",
+  "password":"123456"
+}
+```
+- response
+	- _RESPONSE STATUS -> HTTP **200(OK)**_
+
+```python
+{
+  "acess_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY0NTkxOTY4NCwianRpIjoiNzFlMjAzODItOTMxMC00Zjc0LWExZmItMzQwYmYxZmY3MDEyIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6eyJpZCI6MSwiZW1haWwiOiJmdWxhbm9AbWFpbC5jb20ifSwibmJmIjoxNjQ1OTE5Njg0LCJleHAiOjE2NDU5MjA1ODR9.1f1_uEMO3wX-NieGoSNVqqhYb4NftiMooMH5w-T0pJo"
+}
+```
+- **Requisições inválidas**
+
+- _RESPONSE STATUS -> HTTP **404 (NOT FOUND)**_
+```python
+# Response
+{
+  "email": "fulasno@mail.com",
+  "message": "Email Not registered"
+}
+```
+
+- _RESPONSE STATUS -> HTTP **401 (UNAUTHORIZED)**_
+```python
+{
+  "message": "email and password do not match"
+}
+```
+
+## GET /user
 
 - Lista todos os usuários
+
 - response:
+	- _RESPONSE STATUS -> HTTP **200(OK)**_
 
 ```python
 # response
@@ -263,38 +302,45 @@ docker-compose down
     "id": 6,
     "name": "fulano",
     "email": "fulano@mail.com",
+    }
+]
+```
+
+## GET /user/< id >
+
+- Mostra um único usuário a partir do deu id
+- Necessário **token (Authorization Bearer)**;
+- response:
+- _RESPONSE STATUS -> HTTP **200(OK)**_
+
+```python
+# response
+{
+  "id": 6,
+  "name": "fulano",
+  "email": "fulano@mail.com",
+  "address": {
     "cep": "11111111",
     "city": "Fortaleza",
     "district": "Barroso",
     "street": "R Manuel Figueiredo",
     "House_number": 222,
     "complement": "A"
-    }
-]
-```
-
-#### GET /user/< id >
-
-- Mostra um único usuário a partir do deu id
-- response:
-
-```python
-# Body
-{
-  "id": 6,
-  "name": "fulano",
-  "email": "fulano@mail.com",
-  "cep": "11111111",
-  "city": "Fortaleza",
-  "district": "Barroso",
-  "street": "R Manuel Figueiredo",
-  "House_number": 222,
-  "complement": "A"
+  }
 }
 ```
 
 - **Requisições inválidas**
-- _RESPONSE STATUS -> HTTP 404 (NOT FOUND)_
+- _RESPONSE STATUS -> HTTP **401 (UNAUTHORIZED)**_
+	- Fazer requisição sem o token
+```python
+# Response
+{
+  "msg": "Missing Authorization Header"
+}
+```
+
+- _RESPONSE STATUS -> HTTP **404 (NOT FOUND)**_
   - passar id não existente como parâmetro
 
 ```python
