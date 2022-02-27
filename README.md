@@ -1,3 +1,7 @@
+## User Registration
+
+Projeto criado para pôr em prática meus conhecimentos. Nesse projeto é possível cadastrar um usuário, listar todos os usuários cadastrados mostrando apenas informações restritas. Também é possível mostrar um usuário, a partir do seu id, com todas as informações deste usuário e listar todos os usuários por cep.
+
 ## Instalação
 
 - Primeiro faça o fork e clone o repositório
@@ -25,10 +29,9 @@ $ pip install -r requirements.txt
 ```
 
 - Crie um arquivo `.env` e configure as variáveis **FLASK_ENV**, **SECRET_KEY** e **SQLALCHEMY_DATABASE_URI** seguindo o exemplo do arquivo `.env.example`
-	- Crie um banco de dados no PostgreSQL e configure SQLALCHEMY_DATABASE_URI com as informações do banco (nome do banco, usuário,senha);
-	- SECRET_KEY pode ser qualquer palavra. Ela será usada para criar o token;
-	- FLASK_ENV indica o ambiente de desenvolvimento (Environment).
-	
+  - Crie um banco de dados no PostgreSQL e configure SQLALCHEMY_DATABASE_URI com as informações do banco (nome do banco, usuário,senha);
+  - SECRET_KEY pode ser qualquer palavra. Ela será usada para criar o token;
+  - FLASK_ENV indica o ambiente de desenvolvimento (Environment).
 - Crie as tabelas no banco de dados através do comando:
 
 ```
@@ -114,7 +117,7 @@ docker-compose down
 	    "name":"fulano",
 	    "email":"fulano@mail.com",
 	    "password":"123456",
-	    "cep":"11111111",
+	    "cep":"11111-111",
 	    "city":"Fortaleza",
 	    "district": "Barroso",
 	    "street":"R Manuel Figueiredo",
@@ -134,7 +137,7 @@ docker-compose down
   	"name": "fulano",
   	"email": "fulano@mail.com",
   	"address": {
-    		"cep": "11111111",
+    		"cep": "11111-111",
     		"city": "Fortaleza",
     		"district": "Barroso",
     		"street": "R Manuel Figueiredo",
@@ -158,7 +161,7 @@ docker-compose down
 
     "email":"fulano@mail.com",
     "password":"123456",
-    "cep":"11111111",
+    "cep":"11111-111",
     "city":"Fortaleza",
     "district": "Barroso",
     "street":"R Manuel Figueiredo",
@@ -205,7 +208,7 @@ docker-compose down
     "name":"fulano",
     "email":1234,
     "password":"123456",
-    "cep":"11111111",
+    "cep":"11111-111",
     "city":"Fortaleza",
     "district": "Barroso",
     "street":"R Manuel Figueiredo",
@@ -250,9 +253,20 @@ docker-compose down
 {
   "message": "email already exists"
 }
-
 ```
+
+- _RESPONSE STATUS -> HTTP **400 (BAD REQUEST)**_
+  - passar um cep com formato diferente de xxxxx-xx
+
+```python
+# Response
+{
+  "message": "Invalid Cep"
+}
+```
+
 ## POST /login
+
 - Faz o login do usuário cadastrado
 - body
 
@@ -262,17 +276,20 @@ docker-compose down
   "password":"123456"
 }
 ```
+
 - response
-	- _RESPONSE STATUS -> HTTP **200(OK)**_
+  - _RESPONSE STATUS -> HTTP **200(OK)**_
 
 ```python
 {
   "acess_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY0NTkxOTY4NCwianRpIjoiNzFlMjAzODItOTMxMC00Zjc0LWExZmItMzQwYmYxZmY3MDEyIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6eyJpZCI6MSwiZW1haWwiOiJmdWxhbm9AbWFpbC5jb20ifSwibmJmIjoxNjQ1OTE5Njg0LCJleHAiOjE2NDU5MjA1ODR9.1f1_uEMO3wX-NieGoSNVqqhYb4NftiMooMH5w-T0pJo"
 }
 ```
+
 - **Requisições inválidas**
 
 - _RESPONSE STATUS -> HTTP **404 (NOT FOUND)**_
+
 ```python
 # Response
 {
@@ -282,6 +299,7 @@ docker-compose down
 ```
 
 - _RESPONSE STATUS -> HTTP **401 (UNAUTHORIZED)**_
+
 ```python
 {
   "message": "email and password do not match"
@@ -293,7 +311,7 @@ docker-compose down
 - Lista todos os usuários
 
 - response:
-	- _RESPONSE STATUS -> HTTP **200(OK)**_
+  - _RESPONSE STATUS -> HTTP **200(OK)**_
 
 ```python
 # response
@@ -320,7 +338,7 @@ docker-compose down
   "name": "fulano",
   "email": "fulano@mail.com",
   "address": {
-    "cep": "11111111",
+    "cep": "11111-111",
     "city": "Fortaleza",
     "district": "Barroso",
     "street": "R Manuel Figueiredo",
@@ -332,7 +350,8 @@ docker-compose down
 
 - **Requisições inválidas**
 - _RESPONSE STATUS -> HTTP **401 (UNAUTHORIZED)**_
-	- Fazer requisição sem o token
+  - Fazer requisição sem o token
+
 ```python
 # Response
 {
@@ -349,3 +368,43 @@ docker-compose down
   "message": "User not found"
 }
 ```
+
+## GET /user/cep/< cep >
+
+- Mostra uma lista de usuários que possuem o mesmo CEP.
+- Necessário **token (Authorization Bearer)**;
+- response:
+- _RESPONSE STATUS -> HTTP **200(OK)**_
+
+```python
+[
+  {
+    "user": {
+      "id": 1,
+      "name": "fulano",
+      "email": "fulano@mail.com"
+    },
+    "address": {
+      "city": "Fortaleza",
+      "district": "Barroso",
+      "street": "R Manuel Figueiredo",
+      "house_number": 222,
+      "complement": "A"
+    }
+  }
+]
+```
+
+- **Requisições inválidas**
+- _RESPONSE STATUS -> HTTP **400 (BAD REQUEST)**_
+
+```python
+# Response
+{
+  "message": "Invalid Cep"
+}
+```
+
+## Contato
+
+- [Linkedin](https://www.linkedin.com/in/miqueias-carvalho-dos-santos/)

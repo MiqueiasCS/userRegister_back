@@ -33,6 +33,12 @@ class InvalidEmailError(Exception):
         super().__init__(self.message)
 
 
+class InvalidCepError(Exception):
+    def __init__(self):
+        self.message ={"message": "Invalid Cep"}
+        super().__init__(self.message)
+
+
 class NotFoundError(Exception):
     def __init__(self):
         self.message = {

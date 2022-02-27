@@ -1,8 +1,8 @@
 from flask import request,current_app,jsonify
 from app.models.user_model import UserModel
 from app.models.address_model import AddressModel
-from app.utils import check_email,check_user,check_login_data,check_create_data
-from app.exceptions import EmailNotFoundError, IncorrectPasswordError, WrongKeysError,InvalidValueError, InvalidEmailError, NotFoundError,InvalidLoginDataTypeError
+from app.utils import check_email,check_user,check_login_data,check_create_data,check_cep
+from app.exceptions import EmailNotFoundError, IncorrectPasswordError, WrongKeysError,InvalidValueError, InvalidEmailError, NotFoundError,InvalidLoginDataTypeError,InvalidCepError
 from sqlalchemy.exc import IntegrityError
 from flask_jwt_extended import create_access_token
 
@@ -14,6 +14,7 @@ def  create_user():
     try:
         data = check_create_data(body)
         check_email(data["email"])
+        check_cep(data["cep"])
 
         password_to_hash = data.pop("password")
 
@@ -42,8 +43,11 @@ def  create_user():
         return jsonify(err.message),400
     except InvalidEmailError as err:
         return jsonify(err.message),400
+    except InvalidCepError as err:
+        return jsonify(err.message),400
     except IntegrityError:
         return jsonify({"message":"email already exists"}),409
+
 
 def login():
     body = request.get_json()
@@ -81,3 +85,16 @@ def get_user(id):
     
     except NotFoundError as err:
         return jsonify(err.message),404
+
+
+def get_users_by_cep(cep):
+
+    try:
+        check_cep(cep)
+        users_list_cep:list[AddressModel] = AddressModel.query.filter_by(cep=cep).all()
+
+        users = [item.serialize() for item in users_list_cep]
+
+        return jsonify(users),200
+    except InvalidCepError as err:
+        return jsonify(err.message),400

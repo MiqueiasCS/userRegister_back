@@ -1,6 +1,6 @@
 from app.exceptions import InvalidEmailError
 from re import fullmatch
-from app.exceptions import NotFoundError,InvalidLoginDataTypeError,WrongKeysError,InvalidValueError
+from app.exceptions import NotFoundError,InvalidLoginDataTypeError,WrongKeysError,InvalidValueError, InvalidCepError
 from app.models.user_model import UserModel
 
 
@@ -39,7 +39,14 @@ def check_email(email: str):
     pattern = "(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
     is_valid = fullmatch(pattern, email)
     if not is_valid:
-        raise InvalidEmailError
+        raise InvalidEmailError()
+
+
+def check_cep(cep:str):
+    pattern = "(^[0-9]{5}-[0-9]{3}$)"
+    is_valid = fullmatch(pattern, cep)
+    if not is_valid:
+        raise InvalidCepError()
 
 
 def check_user(id):

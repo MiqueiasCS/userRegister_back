@@ -14,7 +14,7 @@ class AddressModel(db.Model):
     complement:str
 
     __tablename__ = 'address'
-    
+
     id = Column(Integer,primary_key=True)
     cep = Column(String,nullable=False)
     city = Column(String,nullable=False)
@@ -26,3 +26,15 @@ class AddressModel(db.Model):
     user_id = Column(Integer,ForeignKey('user.id'), nullable=False,unique=True)
 
     user = relationship("UserModel",backref=backref("address",uselist=False))
+
+    def serialize(self):
+        return {
+            "user":self.user,
+            "address":{
+                "city":self.city,
+                "district":self.district,
+                "street":self.street,
+                "house_number":self.House_number,
+                "complement":self.complement
+            }
+        }
