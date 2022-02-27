@@ -3,6 +3,7 @@ from environs import Env
 from app.configs import database, migrations
 from app import routes
 from flask_jwt_extended import JWTManager
+from flask_cors import CORS
 
 env = Env()
 env.read_env()
@@ -15,6 +16,7 @@ def create_app():
     app.config["SQLALCHEMY_DATABASE_URI"] = env("SQLALCHEMY_DATABASE_URI")
     app.config["SECRET_KEY"] = env("SECRET_KEY")
     
+    CORS(app)
     database.init_app(app)
     migrations.init_app(app)
     JWTManager(app)
