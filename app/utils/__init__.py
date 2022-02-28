@@ -29,9 +29,9 @@ def check_create_data(data:dict):
             else:
                 validated_data[key] = item_received
         
-        complement = data.get("complement")
-        if(complement):
-            validated_data["complement"] = complement
+        complement = data.get("complement","")
+    
+        validated_data["complement"] = complement
         
         return validated_data
 
@@ -45,8 +45,10 @@ def check_email(email: str):
 
 def check_cep(cep:str):
     pattern = "(^[0-9]{5}-[0-9]{3}$)"
+    # pattern = "(/^[0-9]{8}$/)"
     is_valid = fullmatch(pattern, cep)
     if not is_valid:
+    # if len(cep) != 8:
         raise InvalidCepError()
 
 
