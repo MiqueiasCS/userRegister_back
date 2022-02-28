@@ -1,3 +1,4 @@
+import datetime
 from flask import Flask
 from environs import Env
 from app.configs import database, migrations
@@ -15,6 +16,7 @@ def create_app():
     app.config["JSON_SORT_KEYS"] = False
     app.config["SQLALCHEMY_DATABASE_URI"] = env("SQLALCHEMY_DATABASE_URI")
     app.config["SECRET_KEY"] = env("SECRET_KEY")
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = datetime.timedelta(minutes=45)
     
     CORS(app)
     database.init_app(app)

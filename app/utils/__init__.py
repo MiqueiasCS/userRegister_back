@@ -10,6 +10,7 @@ def check_create_data(data:dict):
             "email":str,
             "password":str,
             "cep":str,
+            "state":str,
             "city":str,
             "district":str,
             "street":str,

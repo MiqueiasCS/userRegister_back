@@ -1,6 +1,6 @@
 ## User Registration
 
-Projeto criado para pôr em prática meus conhecimentos. Nesse projeto é possível cadastrar um usuário, listar todos os usuários cadastrados mostrando apenas informações restritas. Também é possível mostrar um usuário, a partir do seu id, com todas as informações deste usuário e listar todos os usuários por cep.
+Projeto criado para pôr em prática meus conhecimentos. Nesse projeto é possível cadastrar um usuário e listar todos os usuários cadastrados. Também é possível mostrar um usuário, a partir do seu id, com todas as informações deste usuário e listar todos os usuários por cep.
 
 ## Instalação
 
@@ -118,6 +118,7 @@ docker-compose down
 	    "email":"fulano@mail.com",
 	    "password":"123456",
 	    "cep":"11111-111",
+      "state":"Ceará",
 	    "city":"Fortaleza",
 	    "district": "Barroso",
 	    "street":"R Manuel Figueiredo",
@@ -139,6 +140,7 @@ docker-compose down
   	"address": {
     		"cep": "11111-111",
     		"city": "Fortaleza",
+        "state":"Ceará",
     		"district": "Barroso",
     		"street": "R Manuel Figueiredo",
     		"House_number": 222,
@@ -162,6 +164,7 @@ docker-compose down
     "email":"fulano@mail.com",
     "password":"123456",
     "cep":"11111-111",
+    "state":"Ceará",
     "city":"Fortaleza",
     "district": "Barroso",
     "street":"R Manuel Figueiredo",
@@ -209,6 +212,7 @@ docker-compose down
     "email":1234,
     "password":"123456",
     "cep":"11111-111",
+    "state":"Ceará",
     "city":"Fortaleza",
     "district": "Barroso",
     "street":"R Manuel Figueiredo",
@@ -340,6 +344,7 @@ docker-compose down
   "address": {
     "cep": "11111-111",
     "city": "Fortaleza",
+    "state":"Ceará",
     "district": "Barroso",
     "street": "R Manuel Figueiredo",
     "House_number": 222,

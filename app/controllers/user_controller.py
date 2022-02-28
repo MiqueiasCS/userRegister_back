@@ -75,7 +75,8 @@ def login():
 
 def list_users():
     users = UserModel.query.all()
-    return jsonify(users),200
+    usersList = [user.serialize() for user in users]
+    return jsonify(usersList),200
 
 
 def get_user(id):

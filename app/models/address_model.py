@@ -7,6 +7,7 @@ from sqlalchemy.orm import relationship,backref
 @dataclass
 class AddressModel(db.Model):
     cep:str
+    state:str
     city:str
     district: str
     street:str
@@ -18,6 +19,7 @@ class AddressModel(db.Model):
     id = Column(Integer,primary_key=True)
     cep = Column(String,nullable=False)
     city = Column(String,nullable=False)
+    state = Column(String,nullable=False)
     district = Column(String,nullable=False)
     street = Column(String,nullable=False)
     House_number = Column(Integer,nullable=False)
@@ -31,6 +33,7 @@ class AddressModel(db.Model):
         return {
             "user":self.user,
             "address":{
+                "state":self.state,
                 "city":self.city,
                 "district":self.district,
                 "street":self.street,
